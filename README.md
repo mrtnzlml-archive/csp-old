@@ -19,18 +19,18 @@ There are a lot of configuration options. These are the default ones:
 csp:
   enabled: yes
   report-only: no
-  default-src: 'self'
-  script-src: * 'unsafe-inline' 'unsafe-eval'
-  style-src: * 'unsafe-inline'
-  img-src: 'self' data:
-  connect-src: 'self'
+  default-src: self
+  script-src: * unsafe-inline unsafe-eval
+  style-src: * unsafe-inline
+  img-src: self data:
+  connect-src: self
   font-src: *
   object-src: *
   media-src: *
   report-uri: NULL
   child-src: *
-  form-action: 'self'
-  frame-ancestors: 'self'
+  form-action: self
+  frame-ancestors: self
 ```
 
 If enabled, it will send `Content-Security-Policy` or `Content-Security-Policy-Report-Only` header in `report-only` mode. You can setup whatever values you want in config. `report-uri` should be relative URL:

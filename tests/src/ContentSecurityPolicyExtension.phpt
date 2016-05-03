@@ -81,6 +81,23 @@ class ContentSecurityPolicyExtension extends \Tester\TestCase
 		);
 	}
 
+	public function testApostrophes()
+	{
+		$this->prepare([
+			'a' => 'none',
+			'b' => '* self',
+			'c' => 'test',
+			'd' => 'unsafe-eval *.ur.l',
+			'e' => 'unsafe-inline',
+			'f' => "'none'",
+		]);
+		Assert::same(
+			"header(\"Content-Security-Policy: default-src 'self'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src *; object-src *; media-src *; child-src *; form-action 'self'; frame-ancestors 'self';"
+			. " a 'none'; b * 'self'; c test; d 'unsafe-eval' *.ur.l; e 'unsafe-inline'; f 'none';\");\n",
+			$this->container->getMethod('initialize')->getBody()
+		);
+	}
+
 	private function prepare(array $config = [])
 	{
 		$csp = (new Csp)->setCompiler(new Compiler, 'csp');

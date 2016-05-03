@@ -12,18 +12,25 @@ class ContentSecurityPolicyExtension extends \Nette\DI\CompilerExtension
 	private $defaults = [
 		'enabled' => TRUE,
 		'report-only' => FALSE,
-		'default-src' => "'self'",
-		'script-src' => "* 'unsafe-inline' 'unsafe-eval'",
-		'style-src' => "* 'unsafe-inline'",
-		'img-src' => "'self' data:",
-		'connect-src' => "'self'",
+		'default-src' => 'self',
+		'script-src' => '* unsafe-inline unsafe-eval',
+		'style-src' => '* unsafe-inline',
+		'img-src' => 'self data:',
+		'connect-src' => 'self',
 		'font-src' => '*',
 		'object-src' => '*',
 		'media-src' => '*',
 		//report-uri (POST:csp_report)
 		'child-src' => '*',
-		'form-action' => "'self'",
-		'frame-ancestors' => "'self'",
+		'form-action' => 'self',
+		'frame-ancestors' => 'self',
+	];
+
+	private $apostrophes = [
+		'none',
+		'self',
+		'unsafe-eval',
+		'unsafe-inline',
 	];
 
 	public function afterCompile(\Nette\PhpGenerator\ClassType $class)
@@ -49,6 +56,8 @@ class ContentSecurityPolicyExtension extends \Nette\DI\CompilerExtension
 
 		$policies = [];
 		foreach ($config as $key => $value) {
+			$apostrophes = implode('|', $this->apostrophes);
+			$value = preg_replace("~(?<!')(" . $apostrophes . ")(?!')~", "'$1'", $value);
 			$policies[] = $key . ' ' . $value;
 		}
 		$csp = implode('; ', $policies) . ';';
