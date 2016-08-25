@@ -5,7 +5,9 @@ namespace Mrtnzlml\Tests;
 use Mrtnzlml\ContentSecurityPolicyExtension as Csp;
 use Nette\DI\Compiler;
 use Nette\PhpGenerator\ClassType;
+use Nette\Utils\Validators;
 use Tester\Assert;
+use Tester\FileMock;
 
 require dirname(__DIR__) . '/bootstrap.php';
 
@@ -98,10 +100,35 @@ class ContentSecurityPolicyExtension extends \Tester\TestCase
 		);
 	}
 
-	private function prepare(array $config = [])
+	public function testArrayValues()
 	{
+		$config = <<<NEON
+csp:
+	default-src:
+		- self
+		customKey: https://*.url.l
+	script-src:
+		- *
+		- unsafe-inline
+		- unsafe-eval
+	style-src: * unsafe-inline
+NEON;
+		$this->prepare(FileMock::create($config, 'neon'));
+		Assert::same(
+			"header(\"Content-Security-Policy: default-src 'self' https://*.url.l; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src *; object-src *; media-src *; child-src *; form-action 'self'; frame-ancestors 'self';\");\n",
+			$this->container->getMethod('initialize')->getBody()
+		);
+	}
+
+	private function prepare($config = [])
+	{
+		Validators::assert($config, 'array|string');
 		$csp = (new Csp)->setCompiler(new Compiler, 'csp');
-		$csp->setConfig($config);
+		if (is_string($config) && is_file($config)) {
+			$csp->setConfig($csp->loadFromFile($config)['csp']);
+		} else {
+			$csp->setConfig($config);
+		}
 		$csp->afterCompile($this->container);
 	}
 

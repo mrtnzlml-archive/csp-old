@@ -56,6 +56,9 @@ class ContentSecurityPolicyExtension extends \Nette\DI\CompilerExtension
 
 		$policies = [];
 		foreach ($config as $key => $value) {
+			if (is_array($value)) {
+				$value = implode(' ', $value);
+			}
 			$apostrophes = implode('|', $this->apostrophes);
 			$value = preg_replace("~(?<!')(" . $apostrophes . ")(?!')~", "'$1'", $value);
 			$policies[] = $key . ' ' . $value;

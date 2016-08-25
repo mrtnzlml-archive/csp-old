@@ -5,6 +5,7 @@
 Please read this:
 - https://www.w3.org/TR/CSP/
 - http://content-security-policy.com/
+- https://developer.mozilla.org/en-US/docs/Web/Security/CSP/CSP_policy_directives
 
 This library introduces simple CSP extension for DIC which help you to secure your application:
 
@@ -31,6 +32,17 @@ csp:
   child-src: *
   form-action: self
   frame-ancestors: self
+```
+
+You can also use arrays in configuration:
+
+```
+csp:
+  default-src: self
+  script-src:
+    - *
+    - unsafe-inline
+    - unsafe-eval
 ```
 
 If enabled, it will send `Content-Security-Policy` or `Content-Security-Policy-Report-Only` header in `report-only` mode. You can setup whatever values you want in config. `report-uri` should be relative URL:
