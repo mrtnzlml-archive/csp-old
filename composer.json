@@ -7,7 +7,7 @@
     "GPL-3.0"
   ],
   "require": {
-    "nette/di": "^2.3"
+    "adeira/csp": "^1.0"
   },
   "require-dev": {
     "nette/php-generator": "^2.3",
@@ -15,9 +15,7 @@
     "nette/utils": "^2.4"
   },
   "autoload": {
-    "psr-4": {
-      "Mrtnzlml\\": "src/"
-    }
+    "files": ["src/aliases.php"]
   },
   "autoload-dev": {
     "psr-4": {
